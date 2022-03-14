@@ -1,2 +1,2 @@
-# restaurant-app-admin
+# restaurant-admin
 Restaurant web app for admins
