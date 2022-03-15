@@ -7,13 +7,15 @@ export default class OrdersList extends Component {
     super(props);
     this.onChangeSearchOrderId = this.onChangeSearchOrderId.bind(this);
     this.retrieveOrders = this.retrieveOrders.bind(this);
+    this.retrieveOrderItemsinOrder = this.retrieveOrderItemsinOrder.bind(this);
     this.refreshList = this.refreshList.bind(this);
     this.setActiveOrder = this.setActiveOrder.bind(this);
     this.searchOrderId = this.searchOrderId.bind(this);
 
     this.state = {
       orders: [],
-      currentOrder: null,
+      currentOrder: "",
+      currentOrderItemsInOrder: "",
       currentIndex: -1,
       searchOrderId: ""
     };
@@ -34,10 +36,13 @@ export default class OrdersList extends Component {
   retrieveOrders() {
     AdminDataService.getAllOrders()
       .then(response => {
+          let data = response.data.data;
+          data.sort((a,b) => a.orderId - b.orderId
+          )
         this.setState({
-          orders: response.data
+          orders: data
         });
-        console.log(response.data);
+        console.log(response.data.data);
       })
       .catch(e => {
         console.log(e);
@@ -48,6 +53,7 @@ export default class OrdersList extends Component {
     this.retrieveOrders();
     this.setState({
       currentOrder: null,
+      currentOrderItemsInOrder: null,
       currentIndex: -1
     });
   }
@@ -55,37 +61,53 @@ export default class OrdersList extends Component {
   setActiveOrder(order, index) {
     this.setState({
       currentOrder: order,
+      currentOrderItemsInOrder: null,
       currentIndex: index
-    });
+    })
+    ;
   }
 
   searchOrderId() {
     this.setState({
       currentOrder: null,
+      currentOrderItemsInOrder: null,
       currentIndex: -1
     });
 
     AdminDataService.getOrderByOrderId(this.state.searchOrderId)
       .then(response => {
         this.setState({
-          orders: response.data
+            currentOrder: response.data.data
         });
-        console.log(response.data);
+        console.log(response.data.data);
       })
       .catch(e => {
         console.log(e);
       });
   }
 
+  retrieveOrderItemsinOrder(){
+    AdminDataService.getOrderItemsByOrderId(this.state.currentOrder.orderId)
+      .then(response => {
+      this.setState({
+          orderItemsInOrder: response.data.data
+      });
+      console.log(response.data.data);
+      })
+      .catch(e => {
+      console.log(e);
+      });
+  };
+
   render() {
-    const { searchOrderId, orders, currentOrder, currentIndex } = this.state;
+    const { searchOrderId, orders, orderItemsInOrder, currentOrder, currentIndex } = this.state;
 
     return (
       <div className="list row">
         <div className="col-md-8">
           <div className="input-group mb-3">
             <input
-              type="text"
+              type="number"
               className="form-control"
               placeholder="Search by Order Id"
               value={searchOrderId}
@@ -95,7 +117,7 @@ export default class OrdersList extends Component {
               <button
                 className="btn btn-outline-secondary"
                 type="button"
-                onClick={this.searchOrderId}
+                onClick={() => {this.searchOrderId(); this.retrieveOrderItemsinOrder();}}
               >
                 Search
               </button>
@@ -113,7 +135,7 @@ export default class OrdersList extends Component {
                     "list-group-item " +
                     (index === currentIndex ? "active" : "")
                   }
-                  onClick={() => this.setActiveOrder(order, index)}
+                  onClick={() => {this.setActiveOrder(order, index); this.retrieveOrderItemsinOrder();}}
                   key={index}
                 >
                   {order.orderId}
@@ -177,12 +199,33 @@ export default class OrdersList extends Component {
                 {currentOrder.completed ? "Completed" : "New"}
               </div>
 
-              <Link
-                to={"/orders/ordersId" + currentOrder.orderId}
-                className="badge badge-warning"
+              <br />
+
+              <h4>Order Items</h4>
+
+            <ul className="order-items-in-order">
+
+            {orderItemsInOrder &&
+              orderItemsInOrder.map((orderItemInOrder) => (
+                <React.Fragment key={orderItemInOrder.orderItemId}>
+                  <li><strong>Item Title:</strong> {orderItemInOrder.itemTitle}</li>
+                  <li><strong>Item Unit Price:</strong> {orderItemInOrder.itemUnitPrice}</li>
+                  <li><strong>Quantity:</strong> {orderItemInOrder.quantity}</li>
+                  <li><strong>Special Request:</strong> {orderItemInOrder.specialRequest}</li>
+                  <li><strong>Status:</strong> {orderItemInOrder.status}</li>
+                  <br />
+                </React.Fragment>
+                
+                
+              ))}
+          </ul>
+
+              {/* <Link
+                to={"/orders/ordersId/" + currentOrder.orderId}
               >
                 Edit
-              </Link>
+              </Link> */}
+
             </div>
           ) : (
             <div>

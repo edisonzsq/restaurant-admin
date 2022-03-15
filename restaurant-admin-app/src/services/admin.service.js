@@ -1,25 +1,25 @@
-import http from "../http-common";
+import API from "../http-common";
 
 class AdminDataService {
 
   getAllOrders() {
-    return http.get("/orders");
+    return API.get("/orders");
   }
 
   getOrderByOrderId(orderId) {
-    return http.get(`/orders/orderId/${orderId}`);
+    return API.get(`/orders/orderId/${orderId}`);
   }
 
   getOrderItemsByOrderId(orderId) {
-    return http.get(`/orderItems/orderId/${orderId}`);
+    return API.get(`/orderItems/orderId/${orderId}`);
   }
 
   updateOrder(orderId, data) {
-    return http.put(`/orders/orderId/${orderId}`, data);
+    return API.put(`/orders/orderId/${orderId}`, data);
   }
 
   updateOrderItem(orderItemId, data) {
-    return http.put(`/orderItems/orderItemId/${orderItemId}`, data);
+    return API.put(`/orderItems/orderItemId/${orderItemId}`, data);
   }
 
 //   findOrderByTableId(tableId) {
@@ -27,7 +27,7 @@ class AdminDataService {
 //   }
 
   findOrderItemByItemTitle(itemTitle) {
-    return http.get(`/orderItems?itemTitle=${itemTitle}`);
+    return API.get(`/orderItems?itemTitle=${itemTitle}`);
   }
   
 }

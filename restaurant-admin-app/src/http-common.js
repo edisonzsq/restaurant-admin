@@ -1,8 +1,7 @@
 import axios from "axios";
 
-export default axios.create({
+const API = axios.create({
   baseURL: "https://restaurant-ordering-app.herokuapp.com",
-  headers: {
-    "Content-type": "application/json"
-  }
 });
+
+export default API;

@@ -13,3 +13,7 @@
   max-width: 300px;
   margin: auto;
 }
+
+.order-items-in-order {
+  list-style-type: none;
+  padding-left: 0px;}
