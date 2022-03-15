@@ -168,7 +168,7 @@ export default class OrdersList extends Component {
                 <label>
                   <strong>Date and Time:</strong>
                 </label>{" "}
-                {currentOrder.dateTime}
+                {new Date(currentOrder.dateTime).toLocaleString()}
               </div>
 
               <div>
