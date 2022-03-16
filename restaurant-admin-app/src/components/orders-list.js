@@ -59,13 +59,17 @@ export default class OrdersList extends Component {
   }
 
   
-  setActiveOrder(order, index) {
+  async setActiveOrder(order, index) {    
+    
+    const result = await AdminDataService.getOrderItemsByOrderId(order.orderId)
+
     this.setState({
-      currentOrder: order,
-      currentOrderItemsInOrder: null,
-      currentIndex: index
+      ...this.state,
+      currentOrder: order,      
+      currentIndex: index,
+      currentOrderItemsInOrder:result.data.data
     })
-    ;
+    
   }
 
   retrieveOrderItemsinOrder(){
@@ -75,6 +79,7 @@ export default class OrdersList extends Component {
     AdminDataService.getOrderItemsByOrderId(orderId)
       .then(response => {
       this.setState({
+        ...this.state,
         currentOrderItemsInOrder: response.data.data
       });
       console.log(response.data.data);
@@ -123,7 +128,7 @@ export default class OrdersList extends Component {
               <button
                 className="btn btn-outline-secondary"
                 type="button"
-                onClick={() => {this.searchOrderId(); this.retrieveOrderItemsinOrder();}}
+                onClick={() => {this.searchOrderId();}}
               >
                 Search
               </button>
