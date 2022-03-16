@@ -9,7 +9,7 @@ export default class OrdersList extends Component {
     this.retrieveOrders = this.retrieveOrders.bind(this);
     this.retrieveOrderItemsinOrder = this.retrieveOrderItemsinOrder.bind(this);
     this.refreshList = this.refreshList.bind(this);
-    this.setActiveOrder = this.setActiveOrder.bind(this);
+    this.setActiveOrderAndOrderItems = this.setActiveOrderAndOrderItems.bind(this);
     this.searchOrderId = this.searchOrderId.bind(this);
 
     this.state = {
@@ -59,10 +59,13 @@ export default class OrdersList extends Component {
   }
 
   
-  setActiveOrder(order, index) {
+  async setActiveOrderAndOrderItems(order, index) {
+
+    const result = await AdminDataService.getOrderItemsByOrderId(order.orderId);
+
     this.setState({
       currentOrder: order,
-      currentOrderItemsInOrder: null,
+      currentOrderItemsInOrder: result.data.data,
       currentIndex: index
     })
     ;
@@ -141,7 +144,7 @@ export default class OrdersList extends Component {
                     "list-group-item " +
                     (index === currentIndex ? "active" : "")
                   }
-                  onClick={() => {this.setActiveOrder(order, index); this.retrieveOrderItemsinOrder();}}
+                  onClick={() => {this.setActiveOrderAndOrderItems(order, index);}}
                   key={index}
                 >
                   {order.orderId}
