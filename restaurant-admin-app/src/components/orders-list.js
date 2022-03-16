@@ -37,7 +37,7 @@ export default class OrdersList extends Component {
     AdminDataService.getAllOrders()
       .then(response => {
           let data = response.data.data;
-          data.sort((a,b) => a.orderId - b.orderId
+          data.sort((a,b) => b.orderId - a.orderId
           )
         this.setState({
           orders: data
