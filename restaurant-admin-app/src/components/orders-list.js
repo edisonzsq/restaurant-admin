@@ -15,7 +15,7 @@ export default class OrdersList extends Component {
     this.state = {
       orders: [],
       currentOrder: "",
-      currentOrderItemsInOrder: "",
+      currentOrderItemsInOrder: [],
       currentIndex: -1,
       searchOrderId: ""
     };
@@ -58,6 +58,7 @@ export default class OrdersList extends Component {
     });
   }
 
+  
   setActiveOrder(order, index) {
     this.setState({
       currentOrder: order,
@@ -66,6 +67,22 @@ export default class OrdersList extends Component {
     })
     ;
   }
+
+  retrieveOrderItemsinOrder(){
+
+    let orderId = this.state.currentOrder.orderId;
+    
+    AdminDataService.getOrderItemsByOrderId(orderId)
+      .then(response => {
+      this.setState({
+        currentOrderItemsInOrder: response.data.data
+      });
+      console.log(response.data.data);
+      })
+      .catch(e => {
+      console.log(e);
+      });
+  };
 
   searchOrderId() {
     this.setState({
@@ -86,21 +103,10 @@ export default class OrdersList extends Component {
       });
   }
 
-  retrieveOrderItemsinOrder(){
-    AdminDataService.getOrderItemsByOrderId(this.state.currentOrder.orderId)
-      .then(response => {
-      this.setState({
-          orderItemsInOrder: response.data.data
-      });
-      console.log(response.data.data);
-      })
-      .catch(e => {
-      console.log(e);
-      });
-  };
+
 
   render() {
-    const { searchOrderId, orders, orderItemsInOrder, currentOrder, currentIndex } = this.state;
+    const { searchOrderId, orders, currentOrderItemsInOrder, currentOrder, currentIndex } = this.state;
 
     return (
       <div className="list row">
@@ -205,8 +211,8 @@ export default class OrdersList extends Component {
 
             <ul className="order-items-in-order">
 
-            {orderItemsInOrder &&
-              orderItemsInOrder.map((orderItemInOrder) => (
+            {currentOrderItemsInOrder &&
+              currentOrderItemsInOrder.map((orderItemInOrder) => (
                 <React.Fragment key={orderItemInOrder.orderItemId}>
                   <li><strong>Item Title:</strong> {orderItemInOrder.itemTitle}</li>
                   <li><strong>Item Unit Price:</strong> {orderItemInOrder.itemUnitPrice}</li>
